@@ -14,8 +14,6 @@ from gtts import gTTS
 from playsound import playsound 
 
 
-# from functions import *
-
 # Initialize required files
 dataset = "dataset"
 prototxt = "./face_detection_model/deploy.prototxt"
@@ -24,6 +22,9 @@ min_confidence = 0.5
 embeddings_model = "openface_nn4.small2.v1.t7"
 recognizer = "./output/recognizer.pickle"
 le = "./output/le.pickle"
+
+# REST API Url
+url = 'http://faams.web:8000/rest_api/api/attendance/create.php'
 
 print("[INFO] Loading face detector...")
 detector = cv2.dnn.readNetFromCaffe(prototxt, model)
@@ -35,8 +36,8 @@ recognizer = pickle.loads(open(recognizer, "rb").read())
 le = pickle.loads(open(le, "rb").read())
 
 print("[INFO] Starting video stream...")
-vs = VideoStream(src=-1).start()
-time.sleep(2.0)
+vs = VideoStream(src=0).start()
+time.sleep(2)
 
 date = datetime.datetime.now()
 print("[INFO] Generating list to keep track of attendance on {}".format(date))
@@ -87,12 +88,14 @@ while True:
 			if fW < 110 or fH < 140:
 				continue
 			elif fW < 120 or fH < 150:
-				playsound("./audios/move_closer.mp3")
-				time.sleep(3)
+				# playsound("./audios/move_closer.mp3")
+				print("[INFO] Come Closer to the camera")
+				time.sleep(2)
 				continue
 			elif fW > 150 or fH > 190:
-				playsound("./audios/move_back.mp3")
-				time.sleep(3)
+				# playsound("./audios/move_back.mp3")
+				print("[INFO] Move away from the camera")
+				time.sleep(2)
 				continue
 
 			# construct a blob for the face ROI, then pass the blob
@@ -128,7 +131,6 @@ while True:
 					json.dump(attendance, f)
 
 				# Add attendance to database and retrieve name
-				url = 'http://faams.web:8000/rest_api/api/attendance/create.php'
 				headers = {'Accept' : 'application/json', 'Content-Type' : 'application/json'}
 				r = requests.post(url, data=json.dumps(student_attendance), headers=headers)
 				r = r.json()
@@ -146,9 +148,10 @@ while True:
 				# print(students)
 
 				text = "Good morning {}, your attendance has been recorded. Please enter the classroom".format(name) 
-				var = gTTS(text = text,lang = 'en') 
-				var.save('./audios/confirm.mp3') 
-				playsound("./audios/confirm.mp3")
+				# var = gTTS(text = text,lang = 'en') 
+				# var.save('./audios/confirm.mp3') 
+				# playsound("./audios/confirm.mp3")
+				print("{}".format(text))
 				time.sleep(5)
 
 	# show the output frame

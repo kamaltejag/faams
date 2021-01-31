@@ -11,12 +11,15 @@ from pathlib import Path
 
 # For playing audio
 # from gtts import gTTS 
-from playsound import playsound 
+# from playsound import playsound 
 
 # Default Files Required for Face Detection
 prototxt = "./face_detection_model/deploy.prototxt"
 model = "./face_detection_model/res10_300x300_ssd_iter_140000.caffemodel"
 min_confidence = 0.5
+
+# REST API Url
+url = 'http://faams.web:8000/rest_api/api/student/create.php'
 
 img_id = 1
 
@@ -28,7 +31,8 @@ def save_image(img, user_id, img_id):
 with open('students.json') as f:
     students = json.load(f)
 
-audios = ['./audios/look.mp3', './audios/tilt-left.mp3', './audios/tilt-right.mp3']
+# audios = ['./audios/look.mp3', './audios/tilt-left.mp3', './audios/tilt-right.mp3']
+audios = ["Please look at the camera", "Please tilt your head to the left", "Please tilt your head to the right"]
 
 print("[INFO] Loading Face Detector...")
 net = cv2.dnn.readNetFromCaffe(prototxt, model)
@@ -57,11 +61,14 @@ branch = input().upper()
 print("[INFO] Capturing Images for {}...".format(user_id))
 
 for i in range(0, 3):
-    playsound(audios[i])
-    playsound("./audios/countdown.mp3")
-    playsound("./audios/3.mp3")
-    playsound("./audios/2.mp3")
-    playsound("./audios/1.mp3")
+    # playsound(audios[i])
+    # playsound("./audios/countdown.mp3")
+    # playsound("./audios/3.mp3")
+    # playsound("./audios/2.mp3")
+    # playsound("./audios/1.mp3")
+
+    print("", format(audios[i]))
+    time.sleep(2)
 
     for i in range(0, 3):
         frame = vs.read()
@@ -88,7 +95,8 @@ for i in range(0, 3):
             img_id += 1
 
 print("[INFO] Capturing Completed...")
-playsound("./audios/thank_you.mp3")
+# playsound("./audios/thank_you.mp3")
+
 
 # Adding name and roll number to local json file
 student = {}
