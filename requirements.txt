@@ -1,0 +1,9 @@
+opencv-python
+scikit-learn
+gtts
+playsound
+opencv-python
+imutils
+requests
+vext
+vext.gi
